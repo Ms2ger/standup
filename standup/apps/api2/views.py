@@ -36,8 +36,8 @@ def _get_timeline_params():
         if not isday(week):
             raise ApiError('Error in `week` parameter: must be YYYY-MM-DD form.')
         weekday = get_day(week)
-        params['week_start'] = week_start(weekday)
-        params['week_end'] = week_end(weekday)
+        params['week_start'] = week_start(weekday).date()
+        params['week_end'] = week_end(weekday).date()
 
     return params
 
@@ -127,8 +127,8 @@ def _handle_count(qs, max, params):
 
 def _handle_weekly(qs, params):
     if params.get('week_start') and params.get('week_end'):
-        qs = qs.filter(Status.created >= params['week_start'],
-                       Status.created <= params['week_end'])
+        qs = qs.filter(Status.created.date() >= params['week_start'],
+                       Status.created.date() <= params['week_end'])
     if params['weekly']:
         return qs.order_by(
                 desc(WeekColumnClause("created")),
